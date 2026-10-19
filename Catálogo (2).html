@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Catálogo</title>
+<style>
+:root{--bg:#f6f5f2;--card:#ffffff;--ink:#1b1b1f;--mut:#6b6b73;--line:#e3e1db;--acc:#5b3df5;--accink:#ffffff;--ok:#1a7f4b;--warn:#b45309;--bad:#b42318;--hero:#ece9f7;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121214;--card:#1c1c20;--ink:#f1f1f3;--mut:#9d9da6;--line:#2c2c32;--acc:#8b74ff;--accink:#11111a;--ok:#4cc38a;--warn:#f0a04b;--bad:#ff7a70;--hero:#25232f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121214;--card:#1c1c20;--ink:#f1f1f3;--mut:#9d9da6;--line:#2c2c32;--acc:#8b74ff;--accink:#11111a;--ok:#4cc38a;--warn:#f0a04b;--bad:#ff7a70;--hero:#25232f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 2px}
+.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:20px 0 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;text-align:left}
+.chip[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip small{display:block;font-size:12px;margin-top:2px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px}
+.n{background:var(--acc);color:var(--accink);border-radius:999px;font-size:12px;font-weight:700;padding:1px 8px;margin-left:8px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.mut{color:var(--mut)}
+.hero{background:var(--hero);border-radius:20px;padding:18px;display:flex;gap:16px;align-items:center}
+.hero .img{flex:0 0 110px}
+.hero svg,.hero img{width:100%;height:auto;display:block;max-height:200px;object-fit:contain}
+.hero h2{margin:0 0 4px;font-size:20px;letter-spacing:0;text-transform:none;color:var(--ink)}
+.badge{display:inline-block;background:var(--acc);color:var(--accink);font-weight:700;font-size:13px;border-radius:999px;padding:3px 10px;margin-bottom:8px}
+.price{font-size:22px;font-weight:700}
+.promos{display:flex;gap:8px;margin-top:14px}
+.promo{flex:1;border:1.5px dashed var(--acc);border-radius:14px;padding:10px;text-align:center;font-size:13px;color:var(--mut)}
+.promo b{display:block;font-size:17px;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:22px}
+.lin{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.lin .q{display:flex;align-items:center;gap:10px}
+.lin button{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:17px;cursor:pointer}
+.tot{display:flex;justify-content:space-between;align-items:center;margin:12px 0 4px;gap:10px}
+.tot b{font-size:20px;white-space:nowrap}
+.tot span{font-size:13px}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:600;cursor:pointer;margin-top:10px;background:var(--acc);color:var(--accink)}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.on{opacity:1}
+.gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;z-index:10}
+.gate>div{max-width:360px;text-align:center}
+.gate[hidden]{display:none}
+.foot{color:var(--mut);font-size:12px;margin-top:22px;text-align:center}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <div>
+    <h1>Solo mayores de 18</h1>
+    <p class="sub">Este catálogo ofrece productos con nicotina. Confirmá que sos mayor de edad para continuar.</p>
+    <button class="btn" id="yes">Soy mayor de 18</button>
+    <button class="btn alt" id="no">Salir</button>
+    <p id="nomsg" class="sub" hidden>No podés acceder a este catálogo.</p>
+  </div>
+</div>
+
+<main>
+  <h1 id="tienda"></h1>
+  <p class="sub">Tocá los sabores que quieras y mandá tu pedido por mensaje.</p>
+
+  <div id="prodwrap" hidden><h2>Producto</h2><div class="row" id="prod"></div><div style="height:14px"></div></div>
+
+  <div class="hero" id="hero"></div>
+  <div class="promos" id="promos"></div>
+
+  <h2>Sabores</h2><div class="row" id="sab"></div>
+
+  <div class="card">
+    <div id="lineas"></div>
+    <div class="tot"><span id="resumen" class="mut"></span><b id="total"></b></div>
+    <a class="btn" id="wa" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+    <a class="btn alt" id="ig" target="_blank" rel="noopener">Pedir por Instagram (copia el pedido)</a>
+  </div>
+  <p class="foot">Con 4 o más vapers las promos se combinan solas. Stock actualizado por el vendedor. Entrega o retiro a coordinar por mensaje.</p>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== EDITÁ ESTO: datos de tu tienda, stock y promos ====== */
+const CONFIG = { tienda: "Tu tienda", ig: "mati__vilches", wa: "5493517891695", moneda: "$" };
+const CATALOGO = [
+  { nombre: "Elf Bar Ice King", etiqueta: "ICE KING", puffs: 40000, precio: 29000, img: "",
+    promos: { 2: 55000, 3: 80000 },
+    sabores: {
+      "🍬 Sour Lush Gummy": { stock: 4, color: "#8ed12c" },
+      "🍓 Strawberry Ice":  { stock: 3, color: "#ef5b78" },
+      "🍇 Grape Ice":       { stock: 5, color: "#7b4fd1" },
+      "🍒 Cherry Fuse":     { stock: 4, color: "#c4162f" },
+      "🫐 Blueberry Ice":   { stock: 2, color: "#3b6fe0" },
+      "🍓🍒 Cherry Straz":  { stock: 2, color: "#e0457b" },
+      "🍉 Watermelon Ice":  { stock: 4, color: "#3fbf7f" }
+    } }
+];
+/* ============================================================= */
+
+const $ = id => document.getElementById(id);
+const st = { p: 0, cart: {}, last: null };
+const fmt = n => CONFIG.moneda + n.toLocaleString("es-AR");
+const NOM = { 2: "Dúo", 3: "Trío" };
+
+function stockTxt(n) {
+  if (n <= 0) return '<small class="bad">Sin stock</small>';
+  if (n <= 3) return '<small class="warn">Quedan ' + n + '</small>';
+  return '<small class="ok">Disponible (' + n + ')</small>';
+}
+
+function device(p, color) {
+  const k = Math.round(p.puffs / 1000) + "K";
+  return '<svg viewBox="0 0 120 220" role="img" aria-label="' + p.nombre + '"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="' + color + '"/><stop offset="1" stop-color="' + color + '" stop-opacity=".55"/></linearGradient></defs>' +
+    '<rect x="46" y="6" width="28" height="26" rx="8" fill="#2a2a30"/>' +
+    '<rect x="26" y="26" width="68" height="186" rx="24" fill="url(#g)" stroke="rgba(0,0,0,.25)"/>' +
+    '<rect x="34" y="42" width="8" height="150" rx="4" fill="#fff" opacity=".28"/>' +
+    '<text x="64" y="118" text-anchor="middle" font-size="17" font-weight="800" fill="#fff" transform="rotate(-90 64 118)" font-family="system-ui,sans-serif">' + p.etiqueta + '</text>' +
+    '<text x="68" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">' + k + '</text></svg>';
+}
+
+/* Mejor precio para N unidades combinando 1, 2 y 3 */
+function calc(p, N) {
+  const pr = { 1: p.precio, 2: p.promos[2], 3: p.promos[3] };
+  const best = [0], pick = [0];
+  for (let i = 1; i <= N; i++) {
+    best[i] = Infinity;
+    for (const k of [1, 2, 3]) {
+      if (i >= k && best[i - k] + pr[k] < best[i]) { best[i] = best[i - k] + pr[k]; pick[i] = k; }
+    }
+  }
+  const combos = { 1: 0, 2: 0, 3: 0 };
+  for (let i = N; i > 0; i -= pick[i]) combos[pick[i]]++;
+  return { total: best[N], combos };
+}
+
+function render() {
+  const p = CATALOGO[st.p];
+  const names = Object.keys(p.sabores);
+  const N = Object.values(st.cart).reduce((a, b) => a + b, 0);
+  $("tienda").textContent = CONFIG.tienda;
+  $("prodwrap").hidden = CATALOGO.length < 2;
+  $("prod").innerHTML = CATALOGO.map((x, i) => '<button class="chip" data-p="' + i + '" aria-pressed="' + (i === st.p) + '">' + x.nombre + '</button>').join("");
+
+  const color = p.sabores[st.last] ? p.sabores[st.last].color : p.sabores[names[0]].color;
+  $("hero").innerHTML = '<div class="img">' + (p.img ? '<img src="' + p.img + '" alt="' + p.nombre + '">' : device(p, color)) + '</div>' +
+    '<div><span class="badge">' + p.puffs.toLocaleString("es-AR") + ' puffs</span><h2>' + p.nombre + '</h2><div class="price">' + fmt(p.precio) + '</div></div>';
+
+  $("promos").innerHTML = [2, 3].map(k => '<div class="promo">' + NOM[k] + '<b>' + k + ' por ' + fmt(p.promos[k]) + '</b>Ahorrás ' + fmt(p.precio * k - p.promos[k]) + '</div>').join("");
+
+  $("sab").innerHTML = names.map(k => {
+    const s = p.sabores[k], n = st.cart[k] || 0;
+    return '<button class="chip" data-f="' + k + '"' + (n >= s.stock ? " disabled" : "") + '><span class="dot" style="background:' + s.color + '"></span>' + k + (n ? '<span class="n">×' + n + '</span>' : "") + stockTxt(s.stock) + '</button>';
+  }).join("");
+
+  $("lineas").innerHTML = Object.entries(st.cart).filter(e => e[1] > 0).map(([k, n]) =>
+    '<div class="lin"><span><span class="dot" style="background:' + p.sabores[k].color + '"></span>' + k + '</span><span class="q"><button data-d="' + k + '" data-s="-1" aria-label="Menos">−</button><b>' + n + '</b><button data-d="' + k + '" data-s="1" aria-label="Más"' + (n >= p.sabores[k].stock ? " disabled" : "") + '>+</button></span></div>').join("") ||
+    '<p class="mut" style="margin:0 0 8px">Todavía no elegiste ningún sabor.</p>';
+
+  const r = calc(p, N);
+  const ahorro = p.precio * N - r.total;
+  const partes = [3, 2, 1].filter(k => r.combos[k]).map(k => r.combos[k] + (k === 1 ? (r.combos[k] > 1 ? " sueltos" : " suelto") : " " + NOM[k]));
+  $("total").textContent = N ? fmt(r.total) : "";
+  $("resumen").textContent = N ? N + (N > 1 ? " vapers" : " vaper") + " · " + partes.join(" + ") + (ahorro > 0 ? " · Ahorrás " + fmt(ahorro) : "") : "";
+
+  let msg = "Hola! Quiero pedir " + p.nombre + " " + p.puffs.toLocaleString("es-AR") + " puffs:\n" +
+    Object.entries(st.cart).filter(e => e[1] > 0).map(([k, n]) => "• " + k + " x" + n).join("\n") +
+    "\nPromo: " + partes.join(" + ") + "\nTotal: " + fmt(r.total);
+  const wa = $("wa"), ig = $("ig");
+  wa.href = N ? "https://wa.me/" + CONFIG.wa + "?text=" + encodeURIComponent(msg) : "#";
+  ig.href = "https://ig.me/m/" + CONFIG.ig;
+  ig.style.display = CONFIG.ig === "tuusuario" ? "none" : "";
+  wa.setAttribute("aria-disabled", !N);
+  ig.setAttribute("aria-disabled", !N);
+  ig.dataset.msg = msg;
+}
+
+function toast(t) {
+  const el = $("toast"); el.textContent = t; el.classList.add("on");
+  setTimeout(() => el.classList.remove("on"), 2600);
+}
+
+function cambiar(k, d) {
+  const max = CATALOGO[st.p].sabores[k].stock;
+  const n = Math.max(0, Math.min(max, (st.cart[k] || 0) + d));
+  if (n) st.cart[k] = n; else delete st.cart[k];
+  if (d > 0) st.last = k;
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-p],[data-f],[data-d]");
+  if (!b || b.disabled) return;
+  if (b.dataset.p !== undefined) { st.p = +b.dataset.p; st.cart = {}; st.last = null; }
+  if (b.dataset.f !== undefined) cambiar(b.dataset.f, 1);
+  if (b.dataset.d !== undefined) cambiar(b.dataset.d, +b.dataset.s);
+  render();
+});
+$("ig").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("ig").dataset.msg); toast("Pedido copiado: pegalo en el chat"); }
+  catch (err) { toast("Escribí tu pedido en el chat"); }
+});
+
+function abrir() { $("gate").hidden = true; try { sessionStorage.setItem("mayor", "1"); } catch (e) {} }
+$("yes").onclick = abrir;
+$("no").onclick = () => { $("nomsg").hidden = false; };
+try { if (sessionStorage.getItem("mayor") === "1") $("gate").hidden = true; } catch (e) {}
+
+render();
+</script>
+</body>
+</html>
